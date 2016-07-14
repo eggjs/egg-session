@@ -8,7 +8,7 @@
   "files": [
     "config",
     "app",
-    "app.js",
+    "app.js"
   ],
   "repository": {
     "type": "git",
