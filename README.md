@@ -30,11 +30,9 @@ $ npm i egg-session --save
 
 ## Usage
 
-- plugin.js
-
 ```js
+// {app_root}/config/plugin.js
 exports.session = {
-  enable: true,
   package: 'egg-session',
 };
 ```

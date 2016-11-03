@@ -3,16 +3,18 @@
 const request = require('supertest');
 const should = require('should');
 const mm = require('egg-mock');
+const path = require('path');
 
 describe('test/app/middlewares/session.test.js', () => {
 
   describe('using cookie store', () => {
     let app;
-    before(done => {
+    before(() => {
       app = mm.app({
         baseDir: 'koa-session',
+        customEgg: path.join(__dirname, '../../../node_modules/egg'),
       });
-      app.ready(done);
+      return app.ready();
     });
     afterEach(mm.restore);
 
@@ -31,7 +33,7 @@ describe('test/app/middlewares/session.test.js', () => {
         if (err) return done(err);
         should.exist(res.headers['set-cookie']);
         const cookie = res.headers['set-cookie'].join(';');
-        cookie.should.match(/EGG_SESS=[\w\-]+/);
+        cookie.should.match(/EGG_SESS=[\w-]+/);
 
         // get the former session when userId is not changed.
         app.mockContext({
@@ -90,7 +92,7 @@ describe('test/app/middlewares/session.test.js', () => {
         if (err) return done(err);
         should.exist(res.headers['set-cookie']);
         const cookie = res.headers['set-cookie'].join(';');
-        cookie.should.match(/EGG_SESS=[\w\-]+/);
+        cookie.should.match(/EGG_SESS=[\w-]+/);
 
         // userId 不变，还是读取到上次的 session 值
         app.mockContext({

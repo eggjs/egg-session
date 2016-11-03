@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = function(options, app) {
+module.exports = (options, app) => {
   return require('koa-session')(options, app);
 };
