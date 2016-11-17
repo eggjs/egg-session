@@ -1,7 +1,8 @@
 'use strict';
 
+const fs = require('fs');
 const request = require('supertest');
-const should = require('should');
+const assert = require('power-assert');
 const mm = require('egg-mock');
 const path = require('path');
 
@@ -12,7 +13,6 @@ describe('test/app/middlewares/session.test.js', () => {
     before(() => {
       app = mm.app({
         baseDir: 'koa-session',
-        customEgg: path.join(__dirname, '../../../node_modules/egg'),
       });
       return app.ready();
     });
@@ -31,9 +31,9 @@ describe('test/app/middlewares/session.test.js', () => {
       })
       .expect(200, (err, res) => {
         if (err) return done(err);
-        should.exist(res.headers['set-cookie']);
+        assert(res.headers['set-cookie']);
         const cookie = res.headers['set-cookie'].join(';');
-        cookie.should.match(/EGG_SESS=[\w-]+/);
+        assert(/EGG_SESS=[\w-]+/.test(cookie));
 
         // get the former session when userId is not changed.
         app.mockContext({
@@ -49,7 +49,7 @@ describe('test/app/middlewares/session.test.js', () => {
         })
         .expect(200, (err, res) => {
           if (err) return done(err);
-          should.not.exist(res.headers['set-cookie']);
+          assert(!res.headers['set-cookie']);
 
           // userId change, session still not change
           app.mockContext({
@@ -64,7 +64,7 @@ describe('test/app/middlewares/session.test.js', () => {
             uid: '2',
           })
           .expect(res => {
-            should.not.exist(res.headers['set-cookie']);
+            assert(!res.headers['set-cookie']);
           })
           .expect(200, err => {
             if (err) return done(err);
@@ -90,9 +90,9 @@ describe('test/app/middlewares/session.test.js', () => {
       })
       .expect(200, (err, res) => {
         if (err) return done(err);
-        should.exist(res.headers['set-cookie']);
+        assert(res.headers['set-cookie']);
         const cookie = res.headers['set-cookie'].join(';');
-        cookie.should.match(/EGG_SESS=[\w-]+/);
+        assert(/EGG_SESS=[\w-]+/.test(cookie));
 
         // userId 不变，还是读取到上次的 session 值
         app.mockContext({
@@ -108,7 +108,7 @@ describe('test/app/middlewares/session.test.js', () => {
         })
         .expect(200, (err, res) => {
           if (err) return done(err);
-          should.not.exist(res.headers['set-cookie']);
+          assert(!res.headers['set-cookie']);
 
           // userId change, session still not change
           app.mockContext({
@@ -123,7 +123,7 @@ describe('test/app/middlewares/session.test.js', () => {
             userId: '',
           })
           .expect(res => {
-            should.not.exist(res.headers['set-cookie']);
+            assert(!res.headers['set-cookie']);
           })
           .expect(200, err => {
             if (err) return done(err);
@@ -137,4 +137,28 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('cookie exceed', () => {
+    let app;
+    before(() => {
+      app = mm.app({
+        baseDir: 'large-cookie-session',
+      });
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should log error', done => {
+      request(app.callback())
+      .get('/')
+      .expect(200)
+      .end(err => {
+        assert.ifError(err);
+        const errorPath = path.join(__dirname, '../../fixtures/large-cookie-session/logs/large-cookie-session/common-error.log');
+        const body = fs.readFileSync(errorPath, 'utf8');
+        assert(/nodejs.CookieLimitExceedError: Max cookie limit is 4093, but got 5506/.test(body));
+        done();
+      });
+    });
+  });
 });

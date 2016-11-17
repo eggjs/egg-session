@@ -21,6 +21,7 @@
     "cookie"
   ],
   "dependencies": {
+    "koa-compose": "^2.5.1",
     "koa-session": "^3.4.0"
   },
   "devDependencies": {
@@ -31,6 +32,8 @@
     "egg-mock": "^1.1.0",
     "eslint": "^3.9.1",
     "eslint-config-egg": "^3.1.0",
+    "intelli-espower-loader": "^1.0.1",
+    "power-assert": "^1.4.2",
     "should": "^11.1.1",
     "supertest": "^2.0.1"
   },
@@ -38,10 +41,9 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "test": "npm run lint -- --fix&& npm run test-local",
-    "test-local": "egg-bin test",
-    "cov": "egg-bin cov",
     "lint": "eslint .",
+    "test": "npm run lint -- --fix&& egg-bin test -r intelli-espower-loader",
+    "cov": "egg-bin cov -r intelli-espower-loader",
     "ci": "npm run lint && npm run cov",
     "autod": "autod"
   },
