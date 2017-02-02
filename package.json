@@ -16,7 +16,8 @@
   },
   "keywords": [
     "egg",
-    "plugin",
+    "egg-plugin",
+    "eggPlugin",
     "session",
     "cookie"
   ],
@@ -26,29 +27,26 @@
   },
   "devDependencies": {
     "autod": "^2.7.1",
-    "egg": "*",
-    "egg-bin": "^1.7.0",
-    "egg-ci": "^1.0.3",
-    "egg-mock": "^1.1.0",
-    "eslint": "^3.9.1",
-    "eslint-config-egg": "^3.1.0",
-    "intelli-espower-loader": "^1.0.1",
-    "power-assert": "^1.4.2",
-    "should": "^11.1.1",
-    "supertest": "^2.0.1"
+    "egg": "^0.9.0",
+    "egg-bin": "^2.0.2",
+    "egg-ci": "^1.1.0",
+    "egg-mock": "^2.3.1",
+    "eslint": "^3.14.1",
+    "eslint-config-egg": "^3.2.0",
+    "supertest": "^3.0.0"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint -- --fix&& egg-bin test -r intelli-espower-loader",
-    "cov": "egg-bin cov -r intelli-espower-loader",
+    "test": "npm run lint -- --fix && egg-bin test",
+    "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov",
     "autod": "autod"
   },
   "ci": {
-    "version": "4, 6, 7"
+    "version": "6, 7"
   },
   "author": "dead_horse"
 }

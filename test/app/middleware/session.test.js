@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const request = require('supertest');
-const assert = require('power-assert');
+const assert = require('assert');
 const mm = require('egg-mock');
 const path = require('path');
 
