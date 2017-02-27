@@ -30,7 +30,7 @@ $ npm i egg-session --save
 
 ## Usage
 
-egg-session is a build-in plugin in egg and enabled by default.
+egg-session is a built-in plugin in egg and enabled by default.
 
 ```js
 // {app_root}/config/plugin.js
@@ -43,11 +43,13 @@ egg-session support external store, you can store your sessions in redis, memcac
 
 For example, if you want to store session in redis, you must:
 
-1. dependent [egg-redis](https://github.com/eggjs/egg-redis)
+1. Dependent [egg-redis](https://github.com/eggjs/egg-redis)
 
   ```bash
   npm i --save egg-redis
   ```
+
+2. Import egg-redis as a plugin and set the configuration
 
   ```js
   // config/plugin.js
@@ -64,33 +66,37 @@ For example, if you want to store session in redis, you must:
   };
   ```
 
-- In `app.js`
+3. Implement a session store with redis
 
-```js
-// app.js
+  ```js
+  // app.js
 
-module.exports = app => {
-  // set redis session store
-  // session store must have 3 methods
-  // define sessionStore in `app.js` so you can access `app.redis`
-  app.sessionStore = {
-    * get(key) {
-      const res = yield app.redis.get(key);
-      if (!res) return null;
-      return JSON.parse(res);
-    },
+  module.exports = app => {
+    // set redis session store
+    // session store must have 3 methods
+    // define sessionStore in `app.js` so you can access `app.redis`
 
-    * set(key, value, maxAge) {
-      value = JSON.stringify(value);
-      yield app.redis.set(key, value, 'PX', maxAge);
-    },
+    app.session.use({
+      * get(key) {
+        const res = yield app.redis.get(key);
+        if (!res) return null;
+        return JSON.parse(res);
+      },
 
-    * destroy(key) {
-      yield app.redis.del(key);
-    },
+      * set(key, value, maxAge) {
+        // maxAge not present means session cookies
+        // we can't exactly know the maxAge and just set an appropriate value like one day
+        if (!maxAge) maxAge = 24 * 60 * 60 * 1000;
+        value = JSON.stringify(value);
+        yield app.redis.set(key, value, 'PX', maxAge);
+      },
+
+      * destroy(key) {
+        yield app.redis.del(key);
+      },
+    });
   };
-};
-```
+  ```
 
 Once you use external session store, session is strong dependent on your external store, you can't access session if your external store is down. **Use external session stores only if necessary, avoid use session as a cache, keep session lean and stored by cookie!**
 

@@ -2,7 +2,7 @@
 
 module.exports = app => {
   // set redis session store
-  app.sessionStore = {
+  app.session.use({
     * get(key) {
       const res = yield app.redis.get(key);
       if (!res) return null;
@@ -17,5 +17,5 @@ module.exports = app => {
     * destroy(key) {
       yield app.redis.del(key);
     },
-  };
+  });
 };
