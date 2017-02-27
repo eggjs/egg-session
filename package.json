@@ -22,7 +22,7 @@
     "cookie"
   ],
   "dependencies": {
-    "koa-session": "^3.4.0"
+    "koa-session": "^4.0.0"
   },
   "devDependencies": {
     "autod": "^2.7.1",
@@ -30,8 +30,10 @@
     "egg-bin": "^2.2.3",
     "egg-ci": "^1.2.0",
     "egg-mock": "^3.0.1",
+    "egg-redis": "^1.0.1",
     "eslint": "^3.16.1",
     "eslint-config-egg": "^3.2.0",
+    "mz-modules": "^1.0.0",
     "supertest": "^3.0.0"
   },
   "engines": {
@@ -40,12 +42,15 @@
   "scripts": {
     "lint": "eslint .",
     "test": "npm run lint -- --fix && egg-bin test",
+    "test-local": "egg-bin test",
     "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov",
     "autod": "autod"
   },
   "ci": {
-    "version": "6, 7"
+    "version": "6, 7",
+    "services": "redis-server",
+    "type": "travis"
   },
   "author": "dead_horse"
 }

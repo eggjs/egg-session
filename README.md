@@ -30,12 +30,69 @@ $ npm i egg-session --save
 
 ## Usage
 
+egg-session is a build-in plugin in egg and enabled by default.
+
 ```js
 // {app_root}/config/plugin.js
-exports.session = {
-  package: 'egg-session',
+exports.session = true; // enable by default
+```
+
+### External Store
+
+egg-session support external store, you can store your sessions in redis, memcached or other databases.
+
+For example, if you want to store session in redis, you must:
+
+1. dependent [egg-redis](https://github.com/eggjs/egg-redis)
+
+  ```bash
+  npm i --save egg-redis
+  ```
+
+  ```js
+  // config/plugin.js
+  exports.redis = {
+    enable: true,
+    package: 'egg-redis',
+  };
+  ```
+
+  ```js
+  // config/config.default.js
+  exports.redis = {
+    // your redis configurations
+  };
+  ```
+
+- In `app.js`
+
+```js
+// app.js
+
+module.exports = app => {
+  // set redis session store
+  // session store must have 3 methods
+  // define sessionStore in `app.js` so you can access `app.redis`
+  app.sessionStore = {
+    * get(key) {
+      const res = yield app.redis.get(key);
+      if (!res) return null;
+      return JSON.parse(res);
+    },
+
+    * set(key, value, maxAge) {
+      value = JSON.stringify(value);
+      yield app.redis.set(key, value, 'PX', maxAge);
+    },
+
+    * destroy(key) {
+      yield app.redis.del(key);
+    },
+  };
 };
 ```
+
+Once you use external session store, session is strong dependent on your external store, you can't access session if your external store is down. **Use external session stores only if necessary, avoid use session as a cache, keep session lean and stored by cookie!**
 
 ## Configuration
 
