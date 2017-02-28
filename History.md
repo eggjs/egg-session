@@ -1,4 +1,11 @@
 
+2.0.0 / 2017-02-28
+==================
+
+  * feat: upgrade koa-session@4, support external session store (#7)
+  * feat: remove cookie length check (#6)
+  * chore: upgrade deps and fix test (#5)
+
 1.1.0 / 2016-11-17
 ==================
 
