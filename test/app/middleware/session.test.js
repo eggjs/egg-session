@@ -1,136 +1,113 @@
 'use strict';
 
+const sleep = require('mz-modules/sleep');
 const request = require('supertest');
 const assert = require('assert');
 const mm = require('egg-mock');
 
 describe('test/app/middlewares/session.test.js', () => {
 
-  describe('using cookie store', () => {
-    let app;
-    before(() => {
-      app = mm.app({
-        baseDir: 'koa-session',
-      });
-      return app.ready();
-    });
-    afterEach(mm.restore);
-
-    it('should work when userId change', done => {
-      app.mockContext({
-        userId: 's1',
-      });
-      request(app.callback())
-      .get('/?uid=1')
-      .expect({
-        userId: 's1',
-        sessionUid: '1',
-        uid: '1',
-      })
-      .expect(200, (err, res) => {
-        if (err) return done(err);
-        assert(res.headers['set-cookie']);
-        const cookie = res.headers['set-cookie'].join(';');
-        assert(/EGG_SESS=[\w-]+/.test(cookie));
-
-        // get the former session when userId is not changed.
-        app.mockContext({
-          userId: 's1',
+  [
+    'cookie-session',
+    'memory-session',
+    'redis-session',
+  ].forEach(name => {
+    describe(name, () => {
+      let app;
+      let agent;
+      before(() => {
+        app = mm.app({
+          baseDir: name,
         });
-        request(app.callback())
-        .get('/?uid=2&userId=s1')
-        .set('Cookie', cookie)
-        .expect({
-          userId: 's1',
-          sessionUid: '1',
-          uid: '2',
-        })
-        .expect(200, (err, res) => {
-          if (err) return done(err);
-          assert(!res.headers['set-cookie']);
+        return app.ready();
+      });
+      beforeEach(() => {
+        agent = request.agent(app.callback());
+      });
+      afterEach(mm.restore);
+      after(() => app.close());
 
-          // userId change, session still not change
-          app.mockContext({
-            userId: 's2',
-          });
-          request(app.callback())
-          .get('/?uid=2')
-          .set('Cookie', cookie)
-          .expect({
-            userId: 's2',
-            sessionUid: '1',
-            uid: '2',
-          })
-          .expect(res => {
-            assert(!res.headers['set-cookie']);
-          })
-          .expect(200, err => {
-            if (err) return done(err);
-            request(app.callback())
-            .get('/clear')
-            .set('Cookie', cookie)
-            .expect('set-cookie', /EGG_SESS=;/, done);
-          });
+      it('should get empty session and do not set cookie when session not populated', function* () {
+        yield agent
+        .get('/get')
+        .expect(200)
+        .expect({})
+        .expect(res => {
+          assert(!res.header['set-cookie'].join('').match(/EGG_SESS/));
         });
       });
-    });
 
-    it('should work when userId missing', done => {
-      app.mockContext({
-        userId: 's1',
+      it('should ctx.session= change the session', function* () {
+        yield agent
+        .get('/set?foo=bar')
+        .expect(200)
+        .expect({ foo: 'bar' })
+        .expect('set-cookie', /EGG_SESS=.*?;/);
       });
-      request(app.callback())
-      .get('/?uid=1')
-      .expect({
-        userId: 's1',
-        sessionUid: '1',
-        uid: '1',
-      })
-      .expect(200, (err, res) => {
-        if (err) return done(err);
-        assert(res.headers['set-cookie']);
-        const cookie = res.headers['set-cookie'].join(';');
-        assert(/EGG_SESS=[\w-]+/.test(cookie));
 
-        // userId 不变，还是读取到上次的 session 值
-        app.mockContext({
-          userId: 's1',
-        });
-        request(app.callback())
-        .get('/?uid=2&userId=s1')
-        .set('Cookie', cookie)
-        .expect({
-          userId: 's1',
-          sessionUid: '1',
-          uid: '2',
-        })
-        .expect(200, (err, res) => {
-          if (err) return done(err);
-          assert(!res.headers['set-cookie']);
+      it('should ctx.session.key= change the session', function* () {
+        yield agent
+        .get('/set?key=foo&foo=bar')
+        .expect(200)
+        .expect({ key: 'foo', foo: 'bar' })
+        .expect('set-cookie', /EGG_SESS=.*?;/);
 
-          // userId change, session still not change
-          app.mockContext({
-            userId: '',
-          });
-          request(app.callback())
-          .get('/?uid=2')
-          .set('Cookie', cookie)
-          .expect({
-            sessionUid: '1',
-            uid: '2',
-            userId: '',
-          })
-          .expect(res => {
-            assert(!res.headers['set-cookie']);
-          })
-          .expect(200, err => {
-            if (err) return done(err);
-            request(app.callback())
-            .get('/clear')
-            .set('Cookie', cookie)
-            .expect('set-cookie', /EGG_SESS=;/, done);
-          });
+        yield agent
+        .get('/setKey?key=bar')
+        .expect(200)
+        .expect({ key: 'bar', foo: 'bar' })
+        .expect('set-cookie', /EGG_SESS=.*?;/);
+      });
+
+      it('should ctx.session=null remove the session', function* () {
+        yield agent
+        .get('/set?key=foo&foo=bar')
+        .expect(200)
+        .expect({ key: 'foo', foo: 'bar' })
+        .expect('set-cookie', /EGG_SESS=.*?;/);
+
+        yield agent
+        .get('/remove')
+        .expect(204)
+        .expect('set-cookie', /EGG_SESS=;/);
+
+        yield agent
+        .get('/get')
+        .expect(200)
+        .expect({});
+      });
+
+      it('should ctx.session.maxAge= change maxAge', function* () {
+        yield agent
+        .get('/set?key=foo&foo=bar')
+        .expect(200)
+        .expect({ key: 'foo', foo: 'bar' })
+        .expect('set-cookie', /EGG_SESS=.*?;/);
+
+        let cookie;
+
+        yield agent
+        .get('/maxAge?maxAge=100')
+        .expect(200)
+        .expect({ key: 'foo', foo: 'bar' })
+        .expect(res => {
+          cookie = res.headers['set-cookie'].join(';');
+          assert(cookie.match(/EGG_SESS=.*?;/));
+          assert(cookie.match(/expires=/));
         });
+
+        yield sleep(200);
+
+        yield agent
+        .get('/get')
+        .expect(200)
+        .expect({});
+
+        yield request(app.callback())
+        .get('/get')
+        .set('cookie', cookie)
+        .expect(200)
+        .expect({});
       });
     });
   });
