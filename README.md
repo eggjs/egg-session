@@ -75,8 +75,7 @@ For example, if you want to store session in redis, you must:
     // set redis session store
     // session store must have 3 methods
     // define sessionStore in `app.js` so you can access `app.redis`
-
-    app.session.use({
+    app.sessionStore = {
       * get(key) {
         const res = yield app.redis.get(key);
         if (!res) return null;
@@ -94,7 +93,17 @@ For example, if you want to store session in redis, you must:
       * destroy(key) {
         yield app.redis.del(key);
       },
-    });
+    };
+
+    // session store can be a session store class
+    // app.sessionStore = class Store {
+    //   constructor(app) {
+    //     this.app = app;
+    //   }
+    //   * get() {}
+    //   * set() {}
+    //   * destroy() {}
+    // };
   };
   ```
 
@@ -103,6 +112,8 @@ Once you use external session store, session is strong dependent on your externa
 ## Configuration
 
 Support all configurations in [koa-session](https://github.com/koajs/session).
+
+[View the default configurations](config/config.default.js)
 
 ## Questions & Suggestions
 
