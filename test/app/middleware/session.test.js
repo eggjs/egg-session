@@ -6,6 +6,52 @@ const assert = require('assert');
 const mm = require('egg-mock');
 
 describe('test/app/middlewares/session.test.js', () => {
+  let app;
+  let agent;
+  afterEach(mm.restore);
+
+  describe('sesionStore', () => {
+
+    before(() => {
+      app = mm.app({ baseDir: 'memory-session' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+    });
+    after(() => app.close());
+
+    it('should get sessionStore', function* () {
+      mm.empty(app.sessionStore, 'set');
+      yield agent
+      .get('/set?foo=bar')
+      .expect(200)
+      .expect({ foo: 'bar' })
+      .expect('set-cookie', /EGG_SESS=.*?;/);
+
+      yield agent.get('/get')
+      .expect(200)
+      .expect({});
+    });
+
+    it('should session store can be chanege', function* () {
+      yield agent
+      .get('/set?foo=bar')
+      .expect(200)
+      .expect({ foo: 'bar' })
+      .expect('set-cookie', /EGG_SESS=.*?;/);
+
+      yield agent.get('/get')
+      .expect(200)
+      .expect({ foo: 'bar' });
+
+      app.sessionStore = null;
+
+      yield agent.get('/get')
+      .expect(200)
+      .expect({});
+    });
+  });
 
   [
     'cookie-session',
@@ -13,18 +59,16 @@ describe('test/app/middlewares/session.test.js', () => {
     'redis-session',
   ].forEach(name => {
     describe(name, () => {
-      let app;
-      let agent;
       before(() => {
         app = mm.app({
           baseDir: name,
+          cache: false,
         });
         return app.ready();
       });
       beforeEach(() => {
         agent = request.agent(app.callback());
       });
-      afterEach(mm.restore);
       after(() => app.close());
 
       it('should get empty session and do not set cookie when session not populated', function* () {

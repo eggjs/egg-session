@@ -3,7 +3,7 @@
 const sessions = {};
 
 module.exports = app => {
-  app.sessionStore = {
+  const store = {
     * get(key) {
       return sessions[key];
     },
@@ -16,4 +16,6 @@ module.exports = app => {
       sessions[key] = undefined;
     },
   };
+
+  app.sessionStore = store;
 };
