@@ -24,6 +24,10 @@ module.exports = {
    * @param  {Class|Object} store session store class or instance
    */
   set sessionStore(store) {
+    if (this.config.session.store && this.config.env !== 'unittest') {
+      this.logger.warn('[egg-session] sessionStore already exists and will be overwrite');
+    }
+
     // supoprt this.sesionStore = null to disable external store
     if (!store) {
       this.config.session.store = undefined;

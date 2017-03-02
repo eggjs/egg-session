@@ -35,6 +35,8 @@ describe('test/app/middlewares/session.test.js', () => {
     });
 
     it('should session store can be chanege', function* () {
+      mm(app.config, 'env', 'local');
+
       yield agent
       .get('/set?foo=bar')
       .expect(200)
