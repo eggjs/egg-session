@@ -1,4 +1,9 @@
 
+2.1.0 / 2017-03-02
+==================
+
+  * feat: support set sessionStore to null and get sessionStore (#8)
+
 2.0.0 / 2017-02-28
 ==================
 
