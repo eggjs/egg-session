@@ -34,7 +34,7 @@ describe('test/app/middlewares/session.test.js', () => {
       .expect({});
     });
 
-    it('should session store can be chanege', function* () {
+    it('should session store can be change', function* () {
       mm(app.config, 'env', 'local');
 
       yield agent
