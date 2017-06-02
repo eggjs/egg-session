@@ -113,7 +113,7 @@ Once you use external session store, session is strong dependent on your externa
 
 Support all configurations in [koa-session](https://github.com/koajs/session).
 
-[View the default configurations](https://github.com/eggjs/egg-onerror/blob/master/config/config.default.js)
+[View the default configurations](https://github.com/eggjs/egg-session/blob/master/config/config.default.js)
 
 ## Questions & Suggestions
 
