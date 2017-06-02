@@ -121,5 +121,5 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## License
 
-[MIT](https://github.com/eggjs/egg-onerror/blob/master/LICENSE)
+[MIT](https://github.com/eggjs/egg-session/blob/master/LICENSE)
 
