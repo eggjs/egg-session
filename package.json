@@ -1,6 +1,6 @@
 {
   "name": "egg-session",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "session plugin for egg",
   "eggPlugin": {
     "name": "session"
