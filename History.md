@@ -1,4 +1,10 @@
 
+3.0.0 / 2017-11-09
+==================
+
+**others**
+  * [[`38e901b`](http://github.com/eggjs/egg-session/commit/38e901ba06373647074530acdaa72f01d33551a7)] - refactor: upgrade koa-session, support egg2. [BREAKING CHANGE] (#10) (Yiyu He <<dead_horse@qq.com>>)
+
 2.1.1 / 2017-06-04
 ==================
 
