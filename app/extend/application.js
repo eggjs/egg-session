@@ -38,6 +38,9 @@ module.exports = {
     assert(typeof store.get === 'function', 'store.get must be function');
     assert(typeof store.set === 'function', 'store.set must be function');
     assert(typeof store.destroy === 'function', 'store.destroy must be function');
+    store.get = this.toAsyncFunction(store.get);
+    store.set = this.toAsyncFunction(store.set);
+    store.destroy = this.toAsyncFunction(store.destroy);
     this.config.session.store = store;
   },
 

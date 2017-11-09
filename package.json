@@ -22,22 +22,22 @@
     "cookie"
   ],
   "dependencies": {
-    "koa-session": "^4.0.0"
+    "koa-session": "^5.5.0"
   },
   "devDependencies": {
-    "autod": "^2.7.1",
-    "egg": "^1.0.0-rc.1",
-    "egg-bin": "^2.2.3",
-    "egg-ci": "^1.2.0",
-    "egg-mock": "^3.0.1",
+    "autod": "^2.10.1",
+    "egg": "next",
+    "egg-bin": "^4.3.5",
+    "egg-ci": "^1.8.0",
+    "egg-mock": "^3.13.1",
     "egg-redis": "^1.0.1",
-    "eslint": "^3.16.1",
-    "eslint-config-egg": "^3.2.0",
-    "mz-modules": "^1.0.0",
+    "eslint": "^4.10.0",
+    "eslint-config-egg": "^5.1.1",
+    "mz-modules": "^2.0.0",
     "supertest": "^3.0.0"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "lint": "eslint .",
@@ -48,7 +48,7 @@
     "autod": "autod"
   },
   "ci": {
-    "version": "6, 7",
+    "version": "8, 9",
     "services": "redis-server",
     "type": "travis"
   },
