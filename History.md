@@ -1,4 +1,10 @@
 
+2.2.0 / 2018-01-09
+==================
+
+**features**
+  * [[`2b4c2d9`](http://github.com/eggjs/egg-session/commit/2b4c2d90487df92731c1046fcfd14c6cfbd2a921)] - feat: listen session events and warn (#11) (Yiyu He <<dead_horse@qq.com>>)
+
 2.1.1 / 2017-06-04
 ==================
 

@@ -1,6 +1,6 @@
 {
   "name": "egg-session",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "session plugin for egg",
   "eggPlugin": {
     "name": "session"
@@ -51,6 +51,9 @@
     "version": "6, 7",
     "services": "redis-server",
     "type": "travis"
+  },
+  "publishConfig": {
+    "tag": "2.x"
   },
   "author": "dead_horse"
 }
