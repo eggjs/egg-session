@@ -1,4 +1,13 @@
 
+3.1.0 / 2018-01-09
+==================
+
+**features**
+  * [[`e34fd6e`](http://github.com/eggjs/egg-session/commit/e34fd6e43e9ce933e5a6cb013b37af5f2f959768)] - feat: listen session events and warn (#11) (Yiyu He <<dead_horse@qq.com>>)
+
+**others**
+  * [[`08fd920`](http://github.com/eggjs/egg-session/commit/08fd920cd85cb1c528b74f00e9d2605fbd2e0c86)] - docs: update readme to async function (dead-horse <<dead_horse@qq.com>>)
+
 3.0.0 / 2017-11-09
 ==================
 
