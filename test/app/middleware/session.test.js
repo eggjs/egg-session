@@ -74,6 +74,23 @@ describe('test/app/middlewares/session.test.js', () => {
       });
       after(() => app.close());
 
+      if (name === 'redis-session') {
+        it('should get with ', function* () {
+          yield agent
+            .get('/set?foo=bar')
+            .expect(200)
+            .expect({ foo: 'bar' })
+            .expect('set-cookie', /EGG_SESS=.*?;/);
+
+          mm.empty(app.redis, 'get');
+
+          yield agent
+            .get('/get')
+            .expect(200)
+            .expect({});
+        });
+      }
+
       it('should get empty session and do not set cookie when session not populated', function* () {
         yield agent
           .get('/get')
