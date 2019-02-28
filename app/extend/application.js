@@ -20,7 +20,7 @@ module.exports = {
    *   * set() {},
    *   * destroy() {},
    * }
-   *```
+   * ```
    * @param  {Class|Object} store session store class or instance
    */
   set sessionStore(store) {
