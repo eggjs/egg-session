@@ -1,6 +1,9 @@
 'use strict';
 
 module.exports = function(app) {
+  if (!app.config.session.httpOnly) {
+    app.logger.warn('[egg-session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.');
+  }
   app.config.coreMiddleware.push('session');
 
   // listen on session's events
