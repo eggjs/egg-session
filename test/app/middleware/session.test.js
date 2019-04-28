@@ -55,6 +55,15 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('httpOnly', () => {
+    it('should warn when httponly false', function* () {
+      app = mm.app({ baseDir: 'httponly-false-session' });
+      yield app.ready();
+      app.expectLog('[egg-session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.');
+      yield app.close();
+    });
+  });
+
   [
     'cookie-session',
     'memory-session',
