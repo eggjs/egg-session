@@ -48,7 +48,7 @@
     "autod": "autod"
   },
   "ci": {
-    "version": "8, 9",
+    "version": "8, 10, 12",
     "services": "redis-server",
     "type": "travis"
   },

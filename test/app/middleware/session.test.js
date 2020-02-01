@@ -41,6 +41,10 @@ describe('test/app/middlewares/session.test.js', () => {
         .get('/set?foo=bar')
         .expect(200)
         .expect({ foo: 'bar' })
+        .expect(res => {
+          const cookie = res.headers['set-cookie'].join('|');
+          assert(!cookie.includes('; samesite=none;'));
+        })
         .expect('set-cookie', /EGG_SESS=.*?;/);
 
       yield agent.get('/get')
@@ -61,6 +65,28 @@ describe('test/app/middlewares/session.test.js', () => {
       yield app.ready();
       app.expectLog('[egg-session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.');
       yield app.close();
+    });
+  });
+
+  describe('sameSite', () => {
+    before(() => {
+      app = mm.app({ baseDir: 'samesite-none-session' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+    });
+    after(() => app.close());
+
+    it('should work with sameSite=none', async () => {
+      await agent
+        .get('/set?foo=bar')
+        .expect(200)
+        .expect({ foo: 'bar' })
+        .expect(res => {
+          const cookie = res.headers['set-cookie'].join('|');
+          assert(cookie.includes('; samesite=none;'));
+        });
     });
   });
 
