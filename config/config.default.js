@@ -5,4 +5,5 @@ exports.session = {
   key: 'EGG_SESS',
   httpOnly: true,
   encrypt: true,
+  sameSite: '',
 };
