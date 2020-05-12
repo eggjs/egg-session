@@ -22,7 +22,7 @@
     "cookie"
   ],
   "dependencies": {
-    "koa-session": "^5.7.0"
+    "koa-session": "^6.0.0"
   },
   "devDependencies": {
     "autod": "^2.10.1",
