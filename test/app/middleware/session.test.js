@@ -92,6 +92,43 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('session maxage', () => {
+    before(() => {
+      app = mm.app({ baseDir: 'session-maxage-session' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+    });
+    after(() => app.close());
+
+    it('should work with maxage=ession', async () => {
+      await agent
+        .get('/set?foo=bar')
+        .set('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36')
+        .set('x-forwarded-proto', 'https')
+        .expect(200)
+        .expect({ foo: 'bar' })
+        .expect(res => {
+          const cookie = res.headers['set-cookie'].join('|');
+          assert(!cookie.includes('expires'));
+          assert(!cookie.includes('max-age'));
+        });
+    });
+
+    it('should ctx.session.maxAge=session work', async () => {
+      await agent
+        .get('/maxAge?maxAge=session')
+        .expect(200)
+        .expect(res => {
+          const cookie = res.headers['set-cookie'].join(';');
+          assert(cookie.match(/EGG_SESS=.*?;/));
+          assert(!cookie.includes('expires'));
+          assert(!cookie.includes('max-age'));
+        });
+    });
+  });
+
   [
     'cookie-session',
     'memory-session',
@@ -195,6 +232,7 @@ describe('test/app/middlewares/session.test.js', () => {
             cookie = res.headers['set-cookie'].join(';');
             assert(cookie.match(/EGG_SESS=.*?;/));
             assert(cookie.match(/expires=/));
+            assert(cookie.match(/max-age=/));
           });
 
         yield sleep(200);
