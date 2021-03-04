@@ -11,9 +11,9 @@ module.exports = function(app) {
     ctx.coreLogger.warn('[session][missed] key(%s)', key);
   });
   app.on('session:expired', ({ ctx, key, value }) => {
-    ctx.coreLogger.warn('[session][expired] key(%s) value(%j)', key, value);
+    ctx.coreLogger.warn('[session][expired] key(%s) value(%j)', key, app.config.logValue ? value : '');
   });
   app.on('session:invalid', ({ ctx, key, value }) => {
-    ctx.coreLogger.warn('[session][invalid] key(%s) value(%j)', key, value);
+    ctx.coreLogger.warn('[session][invalid] key(%s) value(%j)', key, app.config.logValue ? value : '');
   });
 };

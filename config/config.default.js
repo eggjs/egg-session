@@ -6,4 +6,5 @@ exports.session = {
   httpOnly: true,
   encrypt: true,
   // sameSite: null,
+  logValue: false,
 };
