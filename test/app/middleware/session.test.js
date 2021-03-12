@@ -92,6 +92,60 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('logValue', () => {
+    before(() => {
+      app = mm.app({ baseDir: 'logValue-false-session' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+      app.mockLog();
+    });
+    after(() => app.close());
+
+    it('when logValue is true, should log the session value', async () => {
+      let cookie;
+      mm(app.config.session, 'logValue', true);
+
+      await agent
+        .get('/maxAge?maxAge=100')
+        .expect(200)
+        .expect(res => {
+          cookie = res.headers['set-cookie'].join(';');
+        });
+
+      await sleep(200);
+
+      await request(app.callback())
+        .get('/get')
+        .set('cookie', cookie)
+        .expect(200)
+        .expect({});
+      app.notExpectLog(`[session][expired] key(undefined) value("")`, 'coreLogger');
+    });
+
+    it('when logValue is false, should not log the session value', async () => {
+      mm(app.config.session, 'logValue', false);
+      let cookie;
+
+      await agent
+        .get('/maxAge?maxAge=100')
+        .expect(200)
+        .expect(res => {
+          cookie = res.headers['set-cookie'].join(';');
+        });
+
+      await sleep(200);
+
+      await request(app.callback())
+        .get('/get')
+        .set('cookie', cookie)
+        .expect(200)
+        .expect({});
+      app.expectLog(`[session][expired] key(undefined) value("")`, 'coreLogger');
+    });
+  });
+
   describe('session maxage', () => {
     before(() => {
       app = mm.app({ baseDir: 'session-maxage-session' });
