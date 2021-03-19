@@ -115,7 +115,9 @@ Support all configurations in [koa-session](https://github.com/koajs/session).
 
 * logValue
 
+```
 Support not to print the session value when session event trigger log. Default to be true.
+```
 
 [View the default configurations](https://github.com/eggjs/egg-session/blob/master/config/config.default.js)
 
