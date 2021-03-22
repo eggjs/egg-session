@@ -121,7 +121,7 @@ describe('test/app/middlewares/session.test.js', () => {
         .set('cookie', cookie)
         .expect(200)
         .expect({});
-      app.notExpectLog(`[session][expired] key(undefined) value("")`, 'coreLogger');
+      app.notExpectLog('[session][expired] key(undefined) value("")', 'coreLogger');
     });
 
     it('when logValue is false, should not log the session value', async () => {
@@ -142,7 +142,7 @@ describe('test/app/middlewares/session.test.js', () => {
         .set('cookie', cookie)
         .expect(200)
         .expect({});
-      app.expectLog(`[session][expired] key(undefined) value("")`, 'coreLogger');
+      app.expectLog('[session][expired] key(undefined) value("")', 'coreLogger');
     });
   });
 
