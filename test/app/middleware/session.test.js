@@ -105,6 +105,7 @@ describe('test/app/middlewares/session.test.js', () => {
 
     it('when logValue is true, should log the session value', async () => {
       let cookie;
+      app.mockLog();
       mm(app.config.session, 'logValue', true);
 
       await agent
@@ -126,6 +127,7 @@ describe('test/app/middlewares/session.test.js', () => {
 
     it('when logValue is false, should not log the session value', async () => {
       mm(app.config.session, 'logValue', false);
+      app.mockLog();
       let cookie;
 
       await agent
