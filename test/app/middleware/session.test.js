@@ -149,6 +149,24 @@ describe('test/app/middlewares/session.test.js', () => {
 
       app.expectLog('[session][expired] key(undefined) value("")', 'coreLogger');
     });
+
+    it.only('when logValue is false, valid false, should not log the session value', async () => {
+      mm(app.config.session, 'logValue', false);
+      mm(app.config.session, 'valid', () => false);
+      app.mockLog();
+
+      await agent
+        .get('/set?foo=bar')
+        .expect(200)
+        .expect({ foo: 'bar' });
+
+      await agent
+        .get('/get');
+
+      await sleep(1000);
+
+      app.expectLog('[session][invalid] key(undefined) value("")', 'coreLogger');
+    });
   });
 
   describe('session maxage', () => {
