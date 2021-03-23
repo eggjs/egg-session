@@ -92,6 +92,83 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('logValue', () => {
+    before(() => {
+      app = mm.app({ baseDir: 'logValue-false-session' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+      app.mockLog();
+    });
+    after(() => app.close());
+
+    it('when logValue is true, should log the session value', async () => {
+      let cookie;
+      app.mockLog();
+      mm(app.config.session, 'logValue', true);
+
+      await agent
+        .get('/maxAge?maxAge=100')
+        .expect(200)
+        .expect(res => {
+          cookie = res.headers['set-cookie'].join(';');
+        });
+
+      await sleep(200);
+
+      await request(app.callback())
+        .get('/get')
+        .set('cookie', cookie)
+        .expect(200)
+        .expect({});
+      app.notExpectLog('[session][expired] key(undefined) value("")', 'coreLogger');
+    });
+
+    it('when logValue is false, should not log the session value', async () => {
+      mm(app.config.session, 'logValue', false);
+      app.mockLog();
+      let cookie;
+
+      await agent
+        .get('/maxAge?maxAge=100')
+        .expect(200)
+        .expect(res => {
+          cookie = res.headers['set-cookie'].join(';');
+        });
+
+      await sleep(200);
+
+      await request(app.callback())
+        .get('/get')
+        .set('cookie', cookie)
+        .expect(200)
+        .expect({});
+
+      await sleep(1000);
+
+      app.expectLog('[session][expired] key(undefined) value("")', 'coreLogger');
+    });
+
+    it.only('when logValue is false, valid false, should not log the session value', async () => {
+      mm(app.config.session, 'logValue', false);
+      mm(app.config.session, 'valid', () => false);
+      app.mockLog();
+
+      await agent
+        .get('/set?foo=bar')
+        .expect(200)
+        .expect({ foo: 'bar' });
+
+      await agent
+        .get('/get');
+
+      await sleep(1000);
+
+      app.expectLog('[session][invalid] key(undefined) value("")', 'coreLogger');
+    });
+  });
+
   describe('session maxage', () => {
     before(() => {
       app = mm.app({ baseDir: 'session-maxage-session' });
