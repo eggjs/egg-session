@@ -144,6 +144,9 @@ describe('test/app/middlewares/session.test.js', () => {
         .set('cookie', cookie)
         .expect(200)
         .expect({});
+
+      await sleep(1000);
+
       app.expectLog('[session][expired] key(undefined) value("")', 'coreLogger');
     });
   });
