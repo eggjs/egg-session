@@ -1,4 +1,13 @@
 
+3.3.0 / 2021-03-23
+==================
+
+**features**
+  * [[`fb47f1b`](http://github.com/eggjs/egg-session/commit/fb47f1b5dd5037def631066a95f36e9c2488e5f3)] - feat: as default not to log the session val (#17) (clchenliang <<clchenliang@hotmail.com>>)
+
+**others**
+  * [[`a21e6fe`](http://github.com/eggjs/egg-session/commit/a21e6fe89b5228a4fc9609e775f0909c2bb465ee)] - test: add test case for session maxAge (#16) (Yiyu He <<dead_horse@qq.com>>)
+
 3.2.0 / 2020-05-12
 ==================
 
