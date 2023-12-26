@@ -25,8 +25,7 @@
     "koa-session": "^6.0.0"
   },
   "devDependencies": {
-    "autod": "^2.10.1",
-    "egg": "next",
+    "egg": "^3.17.5",
     "egg-bin": "^4.3.5",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.13.1",
@@ -44,8 +43,7 @@
     "test": "npm run lint -- --fix && egg-bin test",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run cov",
-    "autod": "autod"
+    "ci": "npm run lint && npm run cov"
   },
   "ci": {
     "version": "8, 10, 12",
