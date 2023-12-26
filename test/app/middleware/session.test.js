@@ -92,6 +92,30 @@ describe('test/app/middlewares/session.test.js', () => {
     });
   });
 
+  describe('chips', () => {
+    before(() => {
+      app = mm.app({ baseDir: 'chips' });
+      return app.ready();
+    });
+    beforeEach(() => {
+      agent = request.agent(app.callback());
+    });
+    after(() => app.close());
+
+    it('should work with chips', async () => {
+      await agent
+        .get('/set?foo=bar')
+        .set('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.4044.138 Safari/537.36')
+        .set('x-forwarded-proto', 'https')
+        .expect(200)
+        .expect({ foo: 'bar' })
+        .expect(res => {
+          const cookie = res.headers['set-cookie'].join('|');
+          assert(cookie.includes('; secure; httponly; partitioned'));
+        });
+    });
+  });
+
   describe('logValue', () => {
     before(() => {
       app = mm.app({ baseDir: 'logValue-false-session' });
